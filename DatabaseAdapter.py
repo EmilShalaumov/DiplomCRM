@@ -3,6 +3,7 @@ from Model.CrmUser import CrmUser
 import secrets
 import datetime
 import time
+import EDC
 
 class DatabaseAdapter:
     databaseName = 'CRMDB'
@@ -33,8 +34,6 @@ class DatabaseAdapter:
 
     def generateToken(self, users, userId):
         token = secrets.token_hex(16)
-        #expiredatehere
-        #time.strftime('%x %H:%M')
         tokenExpire = datetime.datetime.now() + datetime.timedelta(minutes=self.tokenTime)
         print(tokenExpire)
         users.update_one({"_id": userId}, { "$set": {"token": token, "tokenexpire": tokenExpire}})
@@ -46,6 +45,17 @@ class DatabaseAdapter:
         if user is None or user['tokenexpire']  < datetime.datetime.now():
             return False
         return user
+    
+    def generateKeyPair(self, token):
+        user = self.validateToken(token)
+        if user == False:
+            return False
+        edc = EDC.EDC()
+        #users = self.db[self.usersCollection]
+        (pubkey, privkey) = edc.generateKeyPair()
+        #users.update_one({"_id": user['_id']}, {"$set": {"publickey": pubkey}})
+        return (pubkey, privkey)
+        
 
 
 
@@ -53,7 +63,8 @@ class DatabaseAdapter:
 dba = DatabaseAdapter('localhost', 27017)
 #print(dba.createUser("Vova", "123456"))
 #print(dba.logIn("Emil", "123456"))
-token = dba.logIn('Vova', '123456')
-print(token)
-print(dba.validateToken(token))
+#token = dba.logIn('Vova', '123456')
+#print(token)
+#print(dba.validateToken(token))
+print(dba.generateKeyPair('8de0d79191acef966e3f513503f26fd4'))
 

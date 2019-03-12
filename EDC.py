@@ -5,8 +5,9 @@ class EDC:
     hashAlg = 'MD5'
     keySize = 512
 
-    def __init__(self, hashAlg, keySize):
-        self.hashAlg = hashAlg
+#    def __init__(self, hashAlg, keySize):
+#        self.hashAlg = hashAlg
+#        self.keySize = keySize
 
     def generateKeyPair(self):
         return rsa.newkeys(self.keySize)
